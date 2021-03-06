@@ -144,6 +144,19 @@ skiplist的每个节点会随机一个层数。比如是3，那么就把它放�
 
 ## 过期键删除策略
 
+```yml
+# 生存时间 秒/毫秒
+expire/pexpire key seconds
+# 过期时间 是unix时间戳
+expireat/pexpireat key unix_time
+# 显示剩余生存时间
+ttl/pttl key
+
+expire、pexpire、pexpireat
+```
+
+![1614867584437](redis/1614867584437.png)
+
 - 惰性删除：每次取键时检查，如果过期则删除。节省CPU资源，占用大量内存
 - 定时删除：在设置键的过期时间的同时设置一个定时器，在键的过期时间到来时进行删除
 - 定期删除：redis会将设置过期时间的key放到一个字典中，默认100ms随机抽取一些key，如果过期就删除。具体：从字典随机20个key，删除过期的key，如果比例超过1/4，则重复
@@ -152,17 +165,39 @@ Redis采用定期删除+惰性删除
 
 ## 淘汰策略
 
-volatile-lru：从已设置过期的数据集中挑选最近最久未使用的淘汰
+volatile-lru：从已设置过期的数据集中挑选最久未使用的淘汰
 
 volatile-ttl：从已设置过期的数据集中挑选将要过期的数据淘汰
 
 volatile-random：从已设置过期的数据集中任意挑选数据淘汰
 
-allkeys-lru：从数据集中挑选最近最久未使用的数据淘汰
+allkeys-lru：从数据集中挑选最久未使用的数据淘汰
 
 allkeys-random：从数据集中任意挑选数据淘汰
 
 noeviction：禁止淘汰数据
+
+## 数据库底层实现
+
+```c++
+struct redisServer {
+    // 一个数组，保存着服务器中的所有数据库
+    redisDb *db;
+    // 数据库数量
+    int dbnum;
+};
+typedef struct redisDb {
+    // 数据库键空间，保存着数据库中所有键值对
+    dict *dict;
+    / ...
+    // 过期字典，保存着键的过期时间
+    dict *expires;
+} redisDb;
+```
+
+![1614845760671](redis/1614845760671.png)
+
+
 
 ## LRU
 
@@ -180,7 +215,7 @@ HashMap的Key存储key，Value指向Node节点，保证save和get key的时间�
 
 1. redis有一个全局时钟`lruclock`
 2. 每个object有一个24bit的字段，用来记录最后一次操作的时间戳，在初始化和操作的时候会得到全局`lruclock`来更新自己的`lruclock`。
-3. 如果设置了`maxmemory`，每次操作都要判断是否需要淘汰。随机选择5个(maxmemory-samples值)key，根据全局时钟和key 的内部时钟的差值由小到大排序，放入到淘汰池中，释放掉最后一个key
+3. 如果设置了`maxmemory`，每次操作都要判断是否需要淘汰。随机选择5个(maxmemory-samples值)key，根据全局时钟和key 的内部时钟的差值由小到大排序，放入到**淘汰池**中，释放掉最后一个key
 
 ## 持久化
 
@@ -228,12 +263,13 @@ HashMap的Key存储key，Value指向Node节点，保证save和get key的时间�
 - 加锁时：这两个命令是非原子性的，如果执行完setnx后redis宕机，那么锁就永远无法释放。
 - 解锁时：直接使用del的话会导致任何客户端都可以解锁
 
-通常使用Lua脚本来实现
+通常有两种方法
 
 ```lua
---加锁：set key value ex sec(秒) px mill(毫秒) nx或lua
+-- 加锁：set key value ex sec(秒) px mill(毫秒) nx
 1、set name unique_value px 3000 nx
 
+-- 通常使用Lua脚本来实现
 2、if redis.call('setnx',KEYS[1],ARGV[1]) == 1 then
    	redis.call('expire',KEYS[1],ARGV[2])
     return 1
@@ -356,6 +392,9 @@ Redis Cluter 实现了完全去中心化、线性扩展的集群方案。集群�
 
 ## 常用命令
 
+```yml
+object encoding|refcount|idletime
+
 set key val
 
 get key
@@ -367,6 +406,10 @@ exists key
 hset key field value
 
 hget key field
+
+```
+
+
 
 
 
