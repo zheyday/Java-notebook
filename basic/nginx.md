@@ -81,8 +81,8 @@ google不可能只有一台服务器吧，那么我们怎么知道去访问那�
 每个服务器有三个权重变量：
 
 - weight是配置文件中的；
-- currentWeight是服务器目前的权重，初始值为0
-- effectiveWeight是有效权重，初始值为weight，如果发现节点异常则-1，之后再次选取本节点，调用成功一次则+1，直到weight
+- currentWeight是服务器目前的权重，初始值为0；
+- effectiveWeight是有效权重，初始值为weight，如果发现节点异常则-1，之后再次选取本节点，调用成功一次则+1，直到等于weight。
 
 算法逻辑：
 

@@ -18,7 +18,7 @@ jdk1.8新增了lambda表达式，可以简化为new Thread(()->{  }).start()
 **二、通过Runnable接口创建**
 
 1. 定义Runnable接口的实现类，并重写run()
-2. 创建实例，传入Thread实例
+2. 创建实例，作为参数传入Thread实例
 3. 调用Thread对象start()
 
 **三、通过Callable接口创建**
@@ -288,7 +288,7 @@ monitorenter：当monitor被占用时就会处于锁定状态，线程执行moni
 
 monitorexit：指令执行时，monitor的进入数减1，当值为0时，线程退出monitor
 
-两个指令的执行是通过调用操作系统的互斥原语mutex实现的，被阻塞的线程会被挂起，等待重新调用，会导致用户态和内核态的来回切换，影响性能
+两个指令的执行是通过调用操作系统的互斥原语**mutex**实现的，被阻塞的线程会被挂起，等待重新调用，会导致用户态和内核态的来回切换，影响性能
 
 **同步方法**
 
@@ -823,7 +823,7 @@ execute没有返回值，submit会返回一个Future类型的对象，可以通�
 
 ![image-20200103105525711](Java并发编程实战/image-20200103105525711.png)
 
-### Executor
+### Executors
 
 底层实现是ThreadPoolExecutor，Executors中的静态工厂方法：
 

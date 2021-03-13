@@ -180,6 +180,29 @@ https://zhuanlan.zhihu.com/p/34985026
 
 <img src="https://raw.githubusercontent.com/zheyday/BlogImg/master/img/image-20200429091750600.png" alt="image-20200429091750600" style="zoom:67%;" />
 
+### 常见Hash算法
+
+
+
+### Hash冲突解决
+
+#### 一、开放地址
+
+当关键字的hash地址p出现冲突时，以p为基础，d为增量序列
+$$
+fn=(f(key)+d)%m
+$$
+d是增量序列，根据取值方式不同，主要有三种方法
+
+1. 线性探测：d=1,2,3,4,...
+2. 二次探测：
+   ![1615275382379](java%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93/1615275382379.png)
+3. 双哈希函数探测
+
+#### 二、链地址
+
+
+
 ### 红黑树
 
 **优点**

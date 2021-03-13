@@ -29,6 +29,8 @@
 
 ### 反射性
 
+#### 反射
+
 XSS代码出现在URL中，作为输入提交到服务器处理，然后把带有XSS代码的数据发送给浏览器，浏览器解析后造成XSS漏洞。
 
 ### 存储型
@@ -37,7 +39,33 @@ XSS代码出现在URL中，作为输入提交到服务器处理，然后把带�
 
 ### DOM
 
+修改页面的DOM节点
 
+```html
+<div id="t">
+</div>
+<input tpye="text" id="text" value=""/>
+<input tpye="button" value="write" onclick="test()"/>
+<script>
+	function test(){
+        var str=document.getElementById("text").value;
+        document.getElementById("t").innerHTML="<a href=' "+str+"' >testLink</a>";
+    }
+</script>
+
+如果输入 
+' onclick=alert(/xss/)//
+代码就变成了
+<a href='' onclick=alert(/xss/)//' >testLink</a>
+或者输入
+'><img src=# onerror=alert(/xss2/) /><'
+代码就变成了
+<a href=''><img src=# onerror=alert(/xss2/) /><'' >testLink</a>
+```
+
+![1615434995893](Web%E5%AE%89%E5%85%A8%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90/1615434995893.png)
+
+## XSS构建
 
 
 
