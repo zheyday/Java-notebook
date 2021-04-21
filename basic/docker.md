@@ -76,13 +76,13 @@ mysql> flush privileges;
 
 用户名和密码：ubuntu的
 
-![image-20191210092344913](docker/image-20191210092344913.png)
+![image-20191210092344913](https://gitee.com/zheyday/blog-picture-bed/raw/master/img/20210315200342.png)
 
 主机：localhost
 
 用户名和密码：ubuntu中mysql的
 
-![image-20191210092427150](docker/image-20191210092427150.png)
+![image-20191210092427150](https://gitee.com/zheyday/blog-picture-bed/raw/master/img/20210315200343.png)
 
 ## 常见问题
 
@@ -99,7 +99,7 @@ jmap -heap 1
 
 这个时候会报<font color='red'>Can't attach to the process: ptrace(PTRACE_ATTACH, ..) failed for 1: Operation not permitted</font>
 
-![image-20200510083546971](docker/image-20200510083546971.png)
+![image-20200510083546971](https://gitee.com/zheyday/blog-picture-bed/raw/master/img/20210315200344.png)
 
 三种解决方法：https://blog.csdn.net/russle/article/details/99708261
 
