@@ -81,15 +81,15 @@ public class CallableThread implements Callable<String> {
 
 ### 几个中断方法
 
-**interrupt**
+**interrupt()**
 
 给被调用线程设置中断标志，不会中断正在运行中的线程，实际上是在线程调用sleep、wait、join阻塞时抛出一个中断，使线程提早结束阻塞状态
 
-**interrupted**
+**interrupted()**
 
 static类型，检测并清除**当前线程**的中断状态，重点是当前线程，就是调用这个方法的线程，比如在main中调用thread1.interrupted()，得到main的中断状态
 
-**isInterrupted**
+**isInterrupted()**
 
 检测被调用线程的中断状态
 

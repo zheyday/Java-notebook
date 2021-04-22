@@ -12,7 +12,7 @@ git config --global user.email "email@example.com"
 ssh-keygen -t rsa -C "youremail@example.com"
 
 # 推送本地git到远程git
-git remote add origin https://github.com/zheyday/git_study.git
+git remote add origin git@github.com:zheyday/git_study.git
 git branch -M main
 git push -u origin main
 ```
@@ -29,7 +29,9 @@ git push -u origin main
 
 ### reset
 
-左图处理节点或分支，右图处理文件
+左图处理节点或分支，加上`--hard`参数会恢复到工作区
+
+右图处理文件
 
 ![1614575124450](git%E5%AD%A6%E4%B9%A0/1614575124450.png)
 
@@ -58,8 +60,6 @@ git add --a
 git cherry-pick ***
 ```
 
-
-
 ## 撤销修改
 
 ```yml
@@ -67,15 +67,16 @@ git cherry-pick ***
 1.修改后没有放到暂存区，撤销修改就是和版本库一样
 2.放入暂存区后，又修改了，撤销修改就是回到添加到暂存区的状态
 git restore readme.txt
-# 放到暂存区之后撤销
+# 从master恢复暂存区，工作区不变
 git restore --staged readme.txt
-
+# 从暂存区恢复工作区
+git restore --worktree readme.txt
 # 工作区删除文件后，
 # 1 要在版本库删除
 git rm t1
 git commit -m 'remove t1'
 # 2 如果是删错了，需要恢复
-git checkout -- t1
+git restore t1
 ```
 
 
@@ -88,14 +89,17 @@ git里有个主分支即master，Head指向master，master指向提交
 # 创建分支，并且切换到分支
 git switch -c dev
 git add --a
-git commit -m'test'
+git commit -m 'test'
 # change branch
 git switch master
-git merge master
-# look branch
+#合并dev分支到当前分支
+git merge dev
+# 查看分支
 git branch
 # delete branch
 git branch -d dev
+
+
 git push -u origin master
 git push origin dev
 # 暂存工作现场
@@ -107,7 +111,10 @@ git stash list
 git stash apply
 # 2、恢复后删除
 git stash pop
-
+# 恢复指定stash
+git stash apply stash@{0}
+# 在main分支修复了bug，在dev肯定也存在，那么在dev上执行一次同样的操作即可
+git cherry-pick 4c805e2
 ```
 
 ## 标签
@@ -117,14 +124,15 @@ git tag v1.0
 # 通过commit id添加
 git tag v0.9 f52c63
 # 指定标签信息
-git tag -a <tagname> -m "blablabla..."
+git tag -a <tagname> -m "blablabla..." f52c63
 # delete tag
 git tag -d v1.0
 # 推送某个到远程
 git push origin v1.0
 # 推送全部
 git push origin --tags
-# 删除远程标签
+# 删除远程标签，要先从本地删除，再删除远程
+git tag -d v1.0
 git push origin :refs/tags/v1.0
 ```
 
@@ -143,6 +151,12 @@ restore --staged ==> unstage
 ## 常见错误
 
 1. <font color='red'>git push报错error: failed to push some refs to 'git@github.com:'</font>
-   解决：git pull --rebase origin master git push origin master
-2. Push to origin/master was rejected
+   解决：
+   
+   ```cmd
+   git pull --rebase origin master 
+   git push origin master
+   ```
+   
+   Push to origin/master was rejected
    解决：git push -u origin master -f 
