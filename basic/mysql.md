@@ -89,7 +89,7 @@ MySQL支持多种类型，大致可以分为三类：数值、日期/时间和�
 
 分为两种：
 
-- 整数：tinyint、smallint、mediumint、int、bigint，分别占用8、16(65536)、24(16777216)、32、64位
+- 整数：tinyint(1B)、smallint(2B)、mediumint(3B)、int(4B)、bigint(8B)
 
 - 实数：float、double、decimal
 
@@ -440,6 +440,7 @@ possible_keys: index_abc
 - 对于只有**很少数据值**的列也不应该增加索引 。比如性别列
 - 对于那些定义为text, image和bit数据类型的列不应该增加索引。这是因为，这些列的数据量要么相当大，要么取值很少。 
 - 当修改性能远远大于检索性能时，不应该创建索引
+- 不要让索引的默认值为NULL
 
 **优化sql**
 
@@ -660,7 +661,7 @@ undo log是事务实现原子性和隔离性的基础。当事务对数据库进
 
  - Read Uncommitted读未提交
  隔离级别最低。一个事务B会读到另一个事务A更新后但未提交的数据，如果A回滚，那么B读到的数据就是脏数据，这就是脏读。
- ![在这里插入图片描述](https://raw.githubusercontent.com/zheyday/BlogImg/master/img/20190708100609959.png)
+    ![在这里插入图片描述](https://raw.githubusercontent.com/zheyday/BlogImg/master/img/20190708100609959.png)
 
  - Read Committed
         一个事务从开始直到提交之前，所做的任何修改对其他事务都是不可见的。
@@ -670,12 +671,12 @@ undo log是事务实现原子性和隔离性的基础。当事务对数据库进
 	
  - Repeatable Read（MySQL默认） set transaction isolation level read committed;
  解决了脏读和不可重复读的问题。
-问题： 在事务B中读取数据，另外一个事务A插入一条新记录，当B再次读取时，没有数据，试图更新这条不存在的记录时，竟然能成功，并且，再次读取同一条记录，它就神奇地出现了。这就是**幻读**（Phantom Read），幻读偏重insert操作
- ![在这里插入图片描述](https://raw.githubusercontent.com/zheyday/BlogImg/master/img/20190708101646305.png)
+  问题： 在事务B中读取数据，另外一个事务A插入一条新记录，当B再次读取时，没有数据，试图更新这条不存在的记录时，竟然能成功，并且，再次读取同一条记录，它就神奇地出现了。这就是**幻读**（Phantom Read），幻读偏重insert操作
+    ![在这里插入图片描述](https://raw.githubusercontent.com/zheyday/BlogImg/master/img/20190708101646305.png)
 
  - Serializable
  最严格的隔离级别，所有事务按照次序依次执行，因此，脏读、不可重复读、幻读都不会出现。
-但是，由于事务是串行执行，所以效率会大大下降，应用程序的性能会急剧降低。如果没有特别重要的情景，一般都不会使用Serializable隔离级别。
+  但是，由于事务是串行执行，所以效率会大大下降，应用程序的性能会急剧降低。如果没有特别重要的情景，一般都不会使用Serializable隔离级别。
 
 **默认隔离级别**
  在MySQL中，如果使用InnoDB，默认的隔离级别是Repeatable Read。

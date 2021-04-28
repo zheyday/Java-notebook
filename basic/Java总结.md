@@ -23,7 +23,7 @@ Comparator接口用于用户自定义对象的顺序，是比较接口，`compar
 
 ### 异常
 
-![image-20200330145411951](java面试题总结/image-20200330145411951.png)
+![image-20200330145411951](https://tva1.sinaimg.cn/large/008i3skNly1gptsku22ymj30oy0fxtae.jpg)
 
 Throwable是顶层父类，派生了Error和Exception。Error代表JVM的错误，程序员不用关心。
 
@@ -93,7 +93,80 @@ class Human {
 
 ### 内部类
 
+外部类和内部类的互相访问分为两个方向，每个方向又分为访问静态和非静态属性/方法
+
+1. 静态内部类可以有静态和非静态成员，而非静态内部类只能有非静态成员
+2. 静态内部类只能访问外部类的静态成员，访问非静态成员需要创建外部类实例；而非静态内部类可以访问外部类的所有成员
+
 静态内部类只能访问外部类的静态成员和静态方法，
+
+```java
+class Outer {
+    private int o1 = 1;
+    private static int o2 = 2;
+
+    public void run() {
+//       一、 访问非静态内部类
+//        1 访问非静态属性需要一个内部类实例
+        System.out.println(new Inner().i1);
+//        2 静态属性：非法
+
+//       二、 访问静态内部类
+//        1 访问非静态属性需要创建内部类的实例
+        System.out.println(new Outer.StaticInner().s1);
+//        2 静态属性：可直接访问
+        System.out.println(StaticInner.s2);
+
+    }
+
+    public static void run1() {
+//       一、访问非静态内部类
+//        1 访问非静态属性：因为这个是静态方法，所以首先需要一个外部类实例，然后再需要一个内部类实例
+        System.out.println(new Outer().new Inner().i1);
+//        2 无
+
+//       二、 访问静态内部类
+//        1 可直接访问静态属性
+        System.out.println(StaticInner.s2);
+//        2 访问非静态属性需要创建内部类的实例
+        System.out.println(new Outer.StaticInner().s1);
+    }
+
+    class Inner {
+        private int i1 = 3;
+//        可以访问外部类的所有属性
+        public void run() {
+            System.out.println(o1);
+            System.out.println(o2);
+        }
+
+//        非静态内部类不能定义静态属性和静态方法
+//        private static int i2=4;
+//        public static void run1() {
+//
+//        }
+    }
+
+    static class StaticInner {
+        private int s1 = 5;
+        private static int s2 = 6;
+
+        public void run() {
+//            非静态属性要创建外部类的实例
+            System.out.println(new Outer().o1);
+//            只能访问静态属性
+            System.out.println(o2);
+        }
+
+        public static void r() {
+            System.out.println(new Outer().o1);
+            System.out.println(o2);
+        }
+    }
+}
+```
+
+
 
 ```java
 public class Main {
@@ -196,7 +269,7 @@ d是增量序列，根据取值方式不同，主要有三种方法
 
 1. 线性探测：d=1,2,3,4,...
 2. 二次探测：
-   ![1615275382379](java%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93/1615275382379.png)
+   ![1615275382379](https://tva1.sinaimg.cn/large/008i3skNly1gptskwtuzvj30du021a9z.jpg)
 3. 双哈希函数探测
 
 #### 二、链地址
@@ -351,9 +424,203 @@ A查询，B更新
 
 如果发生这种情况，会出现脏数据，但是2读数据要比3快，所以2之后会发生5，5比4要先发生，这样B就把A写的缓存删掉了
 
+
+
+# SpringBoot
+
+## 监听器
+
+首先配置监听器类，`@WebListener`表示该类为Listener，常用的几个监听器有：
+
+- ServletContextListener：监听ServletContext对象的创建和销毁
+- ServletContextAttributeListener：监听ServletContext对象中属性的改变
+- ServletRequestListener：监听Request对象的创建和销毁
+- ServletRequestAttributeListener：监听Request对象中属性的改变
+- HttpSessionListener：监听session对象的创建和销毁
+- HttpSessionAttributeListener：监听session对象中属性的改变
+
+```java
+@WebListener
+public class MyContextListener implements ServletContextListener {
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        System.out.println("监听器初始化");
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        System.out.println("监听器销毁");
+    }
+}
+```
+
+然后在主类上添加`@ServletComponentScan`注解，括号里面不加好像也行
+
+```java
+@MapperScan("zcs.demo.mapper")
+@ServletComponentScan(basePackages = "zcs.demo.*")
+@SpringBootApplication()
+public class Demo1Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Demo1Application.class, args);
+    }
+}
+```
+
+## 拦截器
+
+1、首先创建拦截器
+
+```java
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * @author zcs
+ */
+public class MyInterceptor implements HandlerInterceptor {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("pre");
+        return true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        System.out.println("post");
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        System.out.println("after");
+    }
+}
+```
+
+2、配置拦截器，使之生效
+
+```java
+@Configuration
+public class MyWebMvcConfigurer implements WebMvcConfigurer {
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+      //配置拦截url，是两个*
+        registry.addInterceptor(new MyInterceptor()).addPathPatterns("/**");
+    }
+}
+```
+
+## 过滤器
+
+```java
+public class TestFilter implements Filter {
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        Filter.super.init(filterConfig);
+    }
+
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        System.out.println("testFilter");
+        filterChain.doFilter(servletRequest,servletResponse);
+    }
+
+    @Override
+    public void destroy() {
+        Filter.super.destroy();
+    }
+}
+```
+
+第一种配置：使用配置类，可以设置执行顺序，Order越小，优先级越高
+
+```java
+@Configuration
+public class TestFilterConfig {
+    @Bean
+    public FilterRegistrationBean<TestFilter> registrationBean(){
+        FilterRegistrationBean<TestFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new TestFilter());
+        registration.setOrder(1);
+        registration.addUrlPatterns("/*");
+        registration.setName("testFilter");
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean<Test1Filter> registrationBean1(){
+        FilterRegistrationBean<Test1Filter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new Test1Filter());
+        registration.setOrder(2);
+        registration.addUrlPatterns("/*");
+        registration.setName("test1Filter");
+        return registration;
+    }
+}
+```
+
+第二种配置：使用注解，无法指定顺序，按照类名排序执行。有的博客说使用`@Order`注解，实测是不行的
+
+```java
+@WebFilter(urlPatterns = "/*",filterName = "testFilter")
+public class TestFilter implements Filter {
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        Filter.super.init(filterConfig);
+    }
+
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        System.out.println("testFilter");
+        filterChain.doFilter(servletRequest,servletResponse);
+    }
+
+    @Override
+    public void destroy() {
+        Filter.super.destroy();
+    }
+}
+```
+
+## 数据绑定
+
+当多个类有相同属性时，使用`@InitBinder`进行区分配置，url也需要对输入参数进行区分
+
+```java
+@RestController
+@RequestMapping("/indexCategory")
+public class IndexCategoryController {
+    @GetMapping("info")
+    public String info(Admin admin,User user){
+        return admin.toString()+" "+user.toString();
+    }
+    @InitBinder("user")
+    public void initUser(WebDataBinder binder){
+        binder.setFieldDefaultPrefix("user.");
+    }
+    @InitBinder("admin")
+    public void initAdmin(WebDataBinder binder){
+        binder.setFieldDefaultPrefix("admin.");
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
 # 容器
 
-![image-20200214203248875](java面试题总结/image-20200214203248875.png)
+![image-20200214203248875](https://tva1.sinaimg.cn/large/008i3skNly1gptskx9c8rj30sj0g5jsx.jpg)
 
 ### fail-fast
 
@@ -429,7 +696,7 @@ private static final Object PRESENT = new Object();
 
 ## Map
 
-![image-20200403164227892](java面试题总结/image-20200403164227892.png)
+![image-20200403164227892](https://tva1.sinaimg.cn/large/008i3skNly1gptskvtp9gj30mu092dgs.jpg)
 
 ### TreeMap
 
@@ -908,7 +1175,7 @@ private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
 
 如果是链表，迁移过程类似HashMap，根据（hash&n）来决定在新table的位置。不同的是这里先遍历链表根据（hash&n）找到最后一个分割点，如图所示，如果该值为1，用hn指向，否则用ln指向。
 
-![image-20200629150648865](java%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93/image-20200629150648865.png)
+![image-20200629150648865](https://tva1.sinaimg.cn/large/008i3skNly1gptskuekauj306e03nwee.jpg)
 
 然后从头部开始，根据节点的信息新建节点，并保存到`ln`或`hn`链表的头部。最后迁移两个链表，并将当前table设置为ForwardingNode
 
@@ -1120,7 +1387,7 @@ else {
 - Decorator：抽象类，继承或实现了Component，同时持有一个Component对象的引用
 - ConcreteDecorator：具体的装饰者对象，负责添加具体的责任，是Decorator的实现类，
 
-![image-20200629195505581](java%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93/image-20200629195505581.png)
+![image-20200629195505581](https://tva1.sinaimg.cn/large/008i3skNly1gptskvdczrj311n0lzgql.jpg)
 
 ### 建造者模式
 

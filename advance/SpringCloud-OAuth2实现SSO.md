@@ -300,21 +300,21 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 会自动跳到oauth-server的登陆页面，输入用户名和密码登陆
 
-{%asset_img 1570779345082.png %}
+![1570779345082](/Users/zcs/Java-notebook/advance/SpringCloud-OAuth2实现SSO/1570779345082.png)
 
 看url，跳转到了oauth/authorize，这是授权接口，并且后面携带了一些zuul配置的信息
 
-{%asset_img 1570779361869.png %}
+![1570779361869](/Users/zcs/Java-notebook/advance/SpringCloud-OAuth2实现SSO/1570779361869.png)
 
 成功
 
-{%asset_img 1570779411739.png %}
-
-
+![1570779411739](/Users/zcs/Java-notebook/advance/SpringCloud-OAuth2实现SSO/1570779411739.png)
 
 访问eureka-client1不需要登陆
 
-{%asset_img 1570779295223.png %}
+![1570779411739](/Users/zcs/Java-notebook/advance/SpringCloud-OAuth2实现SSO/1570779411739.png)
+
+![1570779295223](/Users/zcs/Java-notebook/advance/SpringCloud-OAuth2实现SSO/1570779295223.png)
 
 
 

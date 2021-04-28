@@ -12,6 +12,54 @@
 
 继续输入`exit`，`reboot`两个命令
 
+## 静态ip
+
+```cmd
+vim /etc/sysconfig/network-scripts/ifcfg-ens33
+#重启网络服务
+service network restart
+```
+
+## 脚本
+
+```cmd
+vim hello.sh
+-----
+#!/bin/zsh
+#注释
+echo -e "\e[30;31m hello world \e[0m"
+-----
+#两种调用方法
+#1、设置权限
+chmod u+x hello.sh  chmod 755 hello.sh
+./hello.sh
+# 2、通过bash命令调用
+bash hello.sh
+
+netstat -lnp|grep 6379
+```
+
+
+
+```cmd
+nohup java -jar XXX.jar &
+nohup java -jar some.jar > std.out 2>&1 &
+#查看进程
+ps -ef|grep java
+#杀死进程
+kill -9 pid
+```
+
+![image-20210422190214049](/Users/zcs/Java-notebook/basic/Linux学习/008i3skNly1gpsr10nqjmj31700p4diz.jpg)
+
+![image-20210423162302996](/Users/zcs/Java-notebook/basic/Linux学习/008i3skNly1gptr6wg34jj311y0hywn1.jpg)
+
+
+
+![image-20210423164240556](/Users/zcs/Java-notebook/basic/Linux学习/008i3skNly1gptrr8qp1rj30uo0m2jyp.jpg)
+
+
+
 ## 命令帮助
 
 | 命令     | 说明           |
@@ -26,7 +74,15 @@
 | mkdir -p | 递归创建文件夹 |
 |          |                |
 
-### dd
+## chmod
+
+![image-20210425141029992](/Users/zcs/Java-notebook/basic/Linux学习/image-20210425141029992.png)
+
+
+
+![image-20210425141818322](/Users/zcs/Java-notebook/basic/Linux学习/image-20210425141818322.png)
+
+## dd
 
 按照指定大小和个数的数据块来复制文件或转换文件
 
@@ -36,7 +92,7 @@ dd if=/dev/zero of=560_file count=1 bs=560M
 
 ![1613359250789](Linux%E5%AD%A6%E4%B9%A0/1613359250789.png)
 
-### cp
+## cp
 
 ```yml
 cp [options] source target
@@ -98,8 +154,9 @@ u
 ## 打包压缩
 
 ```yml
-#打包
+#打包 只会打包成.tar
 tar -cvf zcs.tar zcs
+tar -zcvf zcs.tar.gz zcs
 #解包
 tar -xvf zcs.tar
 #压缩
@@ -131,6 +188,13 @@ gunzip t1.txt.gz
 
 
 
+
+# windows
+
+```cmd
+netstat -ano | findstr "8080"
+tasklist|findstr "pid"
+```
 
 
 
