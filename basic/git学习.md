@@ -90,6 +90,9 @@ git里有个主分支即master，Head指向master，master指向提交
 git switch -c dev
 git add --a
 git commit -m 'test'
+# 关联远程和本地分支
+git branch --set-upstream-to=origin/分支名 分支名
+
 # change branch
 git switch master
 #合并dev分支到当前分支
