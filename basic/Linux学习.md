@@ -1,3 +1,9 @@
+### MAC
+
+chsh -s /bin/zsh 使用的shell是zsh
+
+chsh -s /bin/bash 使用的shell是bash
+
 ## centos忘记登陆密码
 
 在这个界面，键盘按下`e`
@@ -74,6 +80,34 @@ kill -9 pid
 | mkdir -p | 递归创建文件夹 |
 |          |                |
 
+## cmd
+
+```xml
+Ctrl+左右：单词之间跳转
+
+ctrl+a:光标移到行首。
+
+ctrl+e:光标移到行尾。 
+
+ctrl+c:杀死当前进程。 
+
+ctrl+k:清除光标后至行尾的内容。 
+
+ctrl+u: 清除光标前至行首间的所有内容。 
+
+ctrl+l:清屏，相当于clear。 
+
+ctrl+r:搜索之前打过的命令。会有一个提示，根据你输入的关键字进行搜索bash的history 
+
+ctrl+w: 移除光标前的一个单词 
+
+ctrl+t: 交换光标位置前的两个字符 
+
+ctrl+d: 删除光标所在字母;注意和backspace以及ctrl+h的区别，这2个是删除光标前的字符 
+```
+
+
+
 ## chmod
 
 ![image-20210425141029992](/Users/zcs/Java-notebook/basic/Linux学习/image-20210425141029992.png)
@@ -101,6 +135,10 @@ cp [options] source target
 
 
 ![1613366153366](Linux%E5%AD%A6%E4%B9%A0/1613366153366.png)
+
+## grep
+
+
 
 ## vi
 
