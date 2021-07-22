@@ -79,6 +79,24 @@ Mybatis运行时使用**JDK动态代理**为Mapper接口生成代理对象proxy�
 
 # MySQL
 
+## InnoDB
+
+### 系统表结构
+
+| 参数                   | 说明               |
+| ---------------------- | ------------------ |
+| innodb_log_buffer_size | 重做日志缓冲区大小 |
+|                        |                    |
+|                        |                    |
+
+
+
+### InnoDB的LRU
+
+midpoint insertion strategy：InnoDB在LRU列表中加入了midpoint位置，新读取到的页不是插入列表首部，而是插入这个位置，由参数`innodb_old_blocks_pct`控制，默认是37，表示距离尾部37%的位置，也就是热点数据是63%。
+
+原因：索引和数据的扫描操作会访问大量的页，这些页通常只在本次查询操作中需要，如果直接将它们放入LRU列表的首部，那么会将真正需要的热点数据页移除。`innodb_old_blocks_time`表示页读取到mid位置多久后会被插入到LRU列表首部
+
 ## 数据类型
 
 MySQL支持多种类型，大致可以分为三类：数值、日期/时间和字符串(字符)类型

@@ -1,4 +1,5 @@
 ---
+
 title: git学习
 tags: git
 ---
@@ -17,7 +18,24 @@ git branch -M main
 git push -u origin main
 ```
 
+## 撤销修改
+
 ![1614575081289](git%E5%AD%A6%E4%B9%A0/1614575081289.png)
+
+```yml
+# 撤销修改两种情况：
+1.修改后没有放到暂存区，撤销修改就是和版本库一样
+2.放入暂存区后，又修改了，撤销修改就是回到添加到暂存区的状态
+git restore readme.txt
+# 从master恢复暂存区，工作区不变
+git restore --staged readme.txt
+# 工作区删除文件后，
+# 1 要在版本库删除
+git rm t1
+git commit -m 'remove t1'
+# 2 如果是删错了，需要恢复
+git restore t1
+```
 
 ## 常用命令
 
@@ -58,28 +76,11 @@ git reflog
 git add --a
 # bug分支
 git cherry-pick ***
+
+git add -A  提交所有变化
+git add -u  提交被修改(modified)和被删除(deleted)文件，不包括新文件(new)
+git add .  提交新文件(new)和被修改(modified)文件，不包括被删除(deleted)文件
 ```
-
-## 撤销修改
-
-```yml
-# 撤销修改两种情况：
-1.修改后没有放到暂存区，撤销修改就是和版本库一样
-2.放入暂存区后，又修改了，撤销修改就是回到添加到暂存区的状态
-git restore readme.txt
-# 从master恢复暂存区，工作区不变
-git restore --staged readme.txt
-# 从暂存区恢复工作区
-git restore --worktree readme.txt
-# 工作区删除文件后，
-# 1 要在版本库删除
-git rm t1
-git commit -m 'remove t1'
-# 2 如果是删错了，需要恢复
-git restore t1
-```
-
-
 
 ## 分支管理
 
@@ -98,9 +99,25 @@ git switch master
 git merge dev
 # 查看分支
 git branch
+# 修改
+git branch -m oldName newName
 # delete branch
 git branch -d dev
+# 删除远程分支
+git push origin --delete 分支名
 
+#拉取特定分支
+#方法一、
+git clone -b dev 代码仓库地址(dev是分支名称)
+#方法二
+git init
+git remote add origin 仓库地址
+git fetch origin dev(dev是分支名称)
+git checkout -b localdev origin/dev(localdev是本地分支名)
+git pull origin dev
+
+#查看对应的远程分支
+git branch -vv
 
 git push -u origin master
 git push origin dev
@@ -145,7 +162,8 @@ git config --global alias.st status
 git config --global unset alias.st
 status ==> st
 commit ==> cm
-restore --staged ==> unstage
+branch ==> br
+restore --staged ==> restaged
 ```
 
 
